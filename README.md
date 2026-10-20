@@ -1,4 +1,4 @@
-<div align="center">
+<div align="center" style="background-color: #0d1117; padding: 20px; border-radius: 8px;">
 
 <img src="Stargif.gif" width="500" alt="Star Logo">
 
