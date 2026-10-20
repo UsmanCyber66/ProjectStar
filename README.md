@@ -1,7 +1,6 @@
 <div align="center">
 
-<!-- If you have a logo image, use this: -->
-<!-- <img src="Starlogo.png" width="120" alt="Star Logo"> -->
+<img src="Stargif.gif" width="140" alt="Star Logo">
 
 # Star
 
