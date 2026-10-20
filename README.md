@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="Stargif.gif" width="240" alt="Star Logo">
+<img src="Stargif.gif" width="500" alt="Star Logo">
 
 # Star
 
