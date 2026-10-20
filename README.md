@@ -1,7 +1,6 @@
 <div align="center">
 
-<!-- If you have a logo image, use this: -->
-<!-- <img src="Starlogo.png" width="120" alt="Star Logo"> -->
+<img src="Starlogo.gif" width="140" alt="Star Logo">
 
 # Star
 
@@ -12,6 +11,7 @@
 
 </div>
 
+---
 ---
 
 Star is a compiled programming language aiming to achieve the syntax of Python and the speed of C++. Star uses C++ to translate clean Python-like code into optimized C++, bridging Python and C++.
