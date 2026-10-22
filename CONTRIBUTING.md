@@ -1,16 +1,15 @@
 Firstly, Thank you for contributing to this project.
-All people contributing to this project are needed to follow the Code Of Conduct
-The guidelines mentioned below are to follow for all contributors, with no exceptions.
+The guidelines mentioned below are to follow for all contributors.
 
-Please target all PRs at the 'test' branch and not the 'main' branch
+Please target all PRs at the 'test' branch and not the 'main' branch.
 The reason for this is that your code will be reviewed and tested and, if needed modified, then it will be pushed to the main branch.
 
+Only some PRs like changing of GIF and modifying README can be directly targeted at main.
 
 Please do not unnecessarily keep contacting maintainers. Your contribution will be in time reviewed and checked.
-All code is checked time to time by maintainers. And by @UsmanCyber66 at least. 
+All code is checked time to time by maintainers. 
 
-
-All functions and features that you add to the project are needed to have a corresponding .md file in the docs/features or docs/folders directory.
+All functions and features that you add to the project are needed to have a corresponding clearly written .md file in the docs/features or docs/folders directory that explains its function so that users may refer to it.
 
 
 IMPORTANT:
