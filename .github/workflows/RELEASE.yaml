@@ -14,11 +14,11 @@ jobs:
         include:
           - os: ubuntu-latest
             artifact_name: StarLinuxUbuntu
-            compile_cmd: g++ -O3 star.cpp -o StarLinuxUbuntu
+            compile_cmd: g++ -O3 src/star.cpp -o StarLinuxUbuntu
           - os: windows-latest
             artifact_name: StarWindows11
             # Windows runner uses PowerShell by default; g++ is pre-installed via MinGW
-            compile_cmd: g++ -O3 star.cpp -o StarWindows11
+            compile_cmd: g++ -O3  src/star.cpp -o StarWindows11
 
     runs-on: ${{ matrix.os }}
 
