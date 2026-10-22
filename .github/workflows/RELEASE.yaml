@@ -1,6 +1,7 @@
 name: Cross-Platform Compile and Release
 
 on:
+  workflow_dispatcH:
   push:
     tags:
       - 'v*' # Triggers whenever you push a tag starting with 'v', e.g., v1.0.0
