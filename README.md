@@ -25,5 +25,6 @@ Below is an example of the simple Star syntax for your reference:
 
 ```star
 define greet(name) {  # This is a comment
-    printvar("hello!<name>!")  # Printvar is the Star equivalent to Python's fstring
+    print(var"hello!<name>!")  var"" is the Star equivalent to Python's fstring
 }
+```
