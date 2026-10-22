@@ -1,10 +1,10 @@
-Name: Cross-Platform Compile and Release
+name: Cross-Platform Compile and Release
 
 on:
   workflow_dispatch:
 
 permissions:
-  contents: write # Required to create/update releases and push tags
+  contents: write
 
 jobs:
   build-and-release:
@@ -34,10 +34,8 @@ jobs:
 
       - name: Archive Binary (Windows)
         if: matrix.os == 'windows-latest'
-        run: Compress-Archive -Path ${{ matrix.artifact_name }}.zip -DestinationPath ${{ matrix.artifact_name }}.zip
-        # Note: Fixed the path above so it directly sets the destination zip properly
+        run: Compress-Archive -Path ${{ matrix.artifact_name }} -DestinationPath ${{ matrix.artifact_name }}.zip
 
-      # Generate an automatic dynamic tag (e.g., release-20261022-1708) so it never fails
       - name: Generate Release Tag
         id: tag
         run: |
