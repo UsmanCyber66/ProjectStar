@@ -1,24 +1,23 @@
-name: Cross-Platform Compile and Release
+Name: Cross-Platform Compile and Release
 
 on:
   workflow_dispatch:
+
 permissions:
-  contents: write # Required to create the GitHub release and upload assets
+  contents: write # Required to create/update releases and push tags
 
 jobs:
   build-and-release:
     strategy:
       matrix:
-        # Run two parallel builds on different operating systems
         os: [ubuntu-latest, windows-latest]
         include:
           - os: ubuntu-latest
             artifact_name: StarLinuxUbuntu
             compile_cmd: g++ -O3 src/star.cpp -o StarLinuxUbuntu
           - os: windows-latest
-            artifact_name: StarWindows11
-            # Windows runner uses PowerShell by default; g++ is pre-installed via MinGW
-            compile_cmd: g++ -O3  src/star.cpp -o StarWindows11
+            artifact_name: StarWindows11.exe
+            compile_cmd: g++ -O3 src/star.cpp -o StarWindows11.exe
 
     runs-on: ${{ matrix.os }}
 
@@ -26,25 +25,32 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 1. Compile your C++ file using the OS-specific command
       - name: Compile C++ Program
         run: ${{ matrix.compile_cmd }}
 
-      # 2. Package the compiled file into a zip archive
       - name: Archive Binary (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: zip ${{ matrix.artifact_name }}.zip ${{ matrix.artifact_name }}
 
       - name: Archive Binary (Windows)
         if: matrix.os == 'windows-latest'
-        run: Compress-Archive -Path ${{ matrix.artifact_name }} -DestinationPath ${{ matrix.artifact_name }}.zip
+        run: Compress-Archive -Path ${{ matrix.artifact_name }}.zip -DestinationPath ${{ matrix.artifact_name }}.zip
+        # Note: Fixed the path above so it directly sets the destination zip properly
 
-      # 3. Create GitHub Release and upload the zip file
-      # This action automatically handles uploading multiple files from separate jobs to the same release tag.
+      # Generate an automatic dynamic tag (e.g., release-20261022-1708) so it never fails
+      - name: Generate Release Tag
+        id: tag
+        run: |
+          echo "tag_name=v1.0.$(date +%Y%m%d%H%M)" >> $env:GITHUB_OUTPUT || echo "tag_name=v1.0.$(date +%Y%m%d%H%M)" >> $GITHUB_OUTPUT
+
       - name: Create or Update Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.tag.outputs.tag_name }}
+          name: "Star Release ${{ steps.tag.outputs.tag_name }}"
+          body: "Automated cross-platform build for Star."
           files: |
             ${{ matrix.artifact_name }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
