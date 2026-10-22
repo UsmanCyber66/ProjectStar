@@ -46,6 +46,9 @@ int main(int argc, char* argv[]) {
                 header_code += emitted_code + "\n";
                 emitted_code = "";
             } else if (tokens[token_index].type == TokenType::IDENTIFIER) {
+                if (tokens[token_index+1].type == TokenType::RPAREN) {
+                    Function(tokens)
+                        } else {
                 VarDecl(tokens);
                 body_code += emitted_code;
                 emitted_code = "";
