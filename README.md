@@ -9,6 +9,8 @@
   <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=c%2B%2B&logoColor=white">
 </p>
 
+<p><a href="https://sirmick.github.io/ProjectStar/"><strong>▶ Try Star in your browser</strong></a></p>
+
 </div>
 
 ---
@@ -37,4 +39,4 @@ define greet(name) {  # This is a comment
 ./web/build.sh      # produces web/star.js
 ```
 
-Then open `web/index.html` in a browser (no server needed). `starimport`/`cppimport` aren't available in the playground, since there's no file system there.
+A live build is at **https://sirmick.github.io/ProjectStar/**, deployed by `.github/workflows/PAGES.yaml` on every push to `main`. To run it locally, open `web/index.html` in a browser (no server needed). `starimport`/`cppimport` aren't available in the playground, since there's no file system there.
