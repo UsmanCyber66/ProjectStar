@@ -28,3 +28,13 @@ define greet(name) {  # This is a comment
     print(var"hello!<name>!")  var"" is the Star equivalent to Python's fstring
 }
 ```
+
+## Web Playground
+
+`web/` holds a browser playground: type Star code in a text box and see the program's output and the generated C++. The compiler runs in the page as WebAssembly. To build it you need [Emscripten](https://emscripten.org):
+
+```sh
+./web/build.sh      # produces web/star.js
+```
+
+Then open `web/index.html` in a browser (no server needed). `starimport`/`cppimport` aren't available in the playground, since there's no file system there.

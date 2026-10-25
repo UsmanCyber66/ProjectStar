@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Star Playground</title>
+<style>
+  :root {
+    --bg: #f6f8fa; --panel: #ffffff; --border: #d0d7de; --text: #1f2328;
+    --muted: #59636e; --accent: #0969da; --error: #cf222e; --code-bg: #f6f8fa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117; --panel: #161b22; --border: #30363d; --text: #e6edf3;
+      --muted: #8d96a0; --accent: #4493f8; --error: #f85149; --code-bg: #0d1117;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+  header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  header img { width: 48px; height: 48px; border-radius: 8px; }
+  h1 { font-size: 22px; margin: 0; }
+  header p { margin: 0; color: var(--muted); font-size: 14px; }
+  .bar { display: flex; align-items: center; gap: 8px; margin: 16px 0 6px; flex-wrap: wrap; }
+  .bar h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0; flex: 1; }
+  .bar .hint { color: var(--muted); font-size: 13px; }
+  textarea, pre {
+    width: 100%; margin: 0; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px;
+    font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--text);
+  }
+  textarea { background: var(--panel); min-height: 220px; resize: vertical; tab-size: 4; }
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  pre { background: var(--code-bg); white-space: pre-wrap; word-break: break-word; min-height: 3em; }
+  pre.error { color: var(--error); border-color: var(--error); }
+  pre.empty { color: var(--muted); font-style: italic; }
+  button, select {
+    font: inherit; font-size: 14px; padding: 5px 12px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--panel); color: var(--text);
+  }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  details { margin-top: 16px; }
+  summary { cursor: pointer; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+  footer { margin-top: 24px; color: var(--muted); font-size: 13px; }
+  footer code { font-size: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <img src="../Stargif.gif" alt="">
+    <div>
+      <h1>Star Playground</h1>
+      <p>Type Star code below. It's transpiled to C++ in your browser by the Star compiler, built to WebAssembly.</p>
+    </div>
+  </header>
+
+  <div class="bar">
+    <h2>Source</h2>
+    <select id="examples" aria-label="Load an example">
+      <option value="">Examples…</option>
+      <option value="hello">Hello</option>
+      <option value="math">Arithmetic</option>
+      <option value="vars">Variables</option>
+    </select>
+    <button class="primary" id="run">Run</button>
+  </div>
+  <textarea id="source" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+  <div class="bar"><span class="hint">Runs as you type · Ctrl/⌘+Enter to run now</span></div>
+
+  <div class="bar"><h2>Output</h2><span class="hint" id="status">Loading compiler…</span></div>
+  <pre id="output" class="empty">…</pre>
+
+  <details open>
+    <summary>Generated C++</summary>
+    <pre id="cpp" class="empty">…</pre>
+  </details>
+
+  <footer>
+    Supported so far: <code>name = expr</code> / <code>name = "text"</code>, <code>print(…)</code>,
+    <code>+ - * /</code> with parentheses, and <code>//</code> comments.
+    The output is what the generated C++ prints once compiled.
+  </footer>
+</main>
+
+<script src="star.js"></script>
+<script>
+  const EXAMPLES = {
+    hello: 'print("Hello from Star!")\n',
+    math: '// Expressions are evaluated at transpile time\nprint(1 + 2)\nprint((10 - 4) / 4)\nprint(7 * (3 + 3))\n',
+    vars: 'name = "Star"\nversion = 0.1\nprint(name)\nprint(version)\n\nwidth = 12\nheight = 4\narea = width * height\nprint(area)\n',
+  };
+
+  const source = document.getElementById('source');
+  const output = document.getElementById('output');
+  const cpp = document.getElementById('cpp');
+  const status = document.getElementById('status');
+  let star = null;
+  let timer = null;
+
+  function show(el, text, placeholder, isError) {
+    el.textContent = text || placeholder;
+    el.classList.toggle('empty', !text);
+    el.classList.toggle('error', !!isError);
+  }
+
+  function run() {
+    if (!star) return;
+    const t0 = performance.now();
+    const r = star.transpile(source.value);
+    const ms = (performance.now() - t0).toFixed(2);
+    if (r.error) {
+      show(output, (r.output ? r.output + '\n' : '') + r.error, '', true);
+      show(cpp, '', '(no C++ generated: fix the error above)');
+      status.textContent = 'Error';
+    } else {
+      show(output, r.output.replace(/\n$/, ''), '(program prints nothing)');
+      show(cpp, r.cpp, '');
+      status.textContent = `Transpiled in ${ms} ms`;
+    }
+    try { localStorage.setItem('star-source', source.value); } catch (e) {}
+  }
+
+  source.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(run, 250); });
+  source.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      source.setRangeText('    ', source.selectionStart, source.selectionEnd, 'end');
+    }
+  });
+  document.getElementById('run').addEventListener('click', run);
+  document.getElementById('examples').addEventListener('change', (e) => {
+    if (!e.target.value) return;
+    source.value = EXAMPLES[e.target.value];
+    e.target.value = '';
+    run();
+  });
+
+  let saved = null;
+  try { saved = localStorage.getItem('star-source'); } catch (e) {}
+  source.value = saved || EXAMPLES.vars;
+
+  createStar().then((m) => { star = m; run(); }).catch((e) => {
+    status.textContent = 'Failed to load compiler';
+    show(output, String(e), '', true);
+  });
+</script>
+</body>
+</html>

@@ -31,31 +31,7 @@ int main(int argc, char* argv[]) {
             combined_source += line + "\n";
         }
 
-        vector<Token> tokens = tokenize(combined_source);
-
-        string header_code = "#include <iostream>\n";
-        string body_code = "";
-
-        while (token_index < tokens.size() && tokens[token_index].type != TokenType::EOF_TOKEN) {
-            if (tokens[token_index].type == TokenType::PRINT) {
-                PrintStatement(tokens);
-                body_code += emitted_code;
-                emitted_code = "";
-            } else if (tokens[token_index].type == TokenType::CPPIMPORT) {
-                cppimport(tokens);
-                header_code += emitted_code + "\n";
-                emitted_code = "";
-            } else if (tokens[token_index].type == TokenType::IDENTIFIER) {
-                VarDecl(tokens);
-                body_code += emitted_code;
-                emitted_code = "";
-            } else {
-                token_index++;
-            }
-        }
-
-        // Assembly of valid C++ source structure
-        emitted_code = header_code + "int main() {\n" + body_code + "    return 0;\n}\n";
+        emitted_code = transpile_source(combined_source);
 
         cout << emitted_code;
     } catch (const exception& e) {
