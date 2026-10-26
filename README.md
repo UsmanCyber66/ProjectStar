@@ -9,6 +9,8 @@
   <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=c%2B%2B&logoColor=white">
 </p>
 
+<p><a href="https://sirmick.github.io/ProjectStar/"><strong>▶ Try Star in your browser</strong></a></p>
+
 </div>
 
 ---
@@ -28,3 +30,13 @@ define greet(name) {  # This is a comment
     print(var"hello!<name>!")  var"" is the Star equivalent to Python's fstring
 }
 ```
+
+## Web Playground
+
+`web/` holds a browser playground: type Star code in a text box and see the program's output and the generated C++. The compiler runs in the page as WebAssembly. To build it you need [Emscripten](https://emscripten.org):
+
+```sh
+./web/build.sh      # produces web/star.js
+```
+
+A live build is at **https://sirmick.github.io/ProjectStar/**, deployed by `.github/workflows/PAGES.yaml` on every push to `main`. To run it locally, open `web/index.html` in a browser (no server needed). `starimport`/`cppimport` aren't available in the playground, since there's no file system there.

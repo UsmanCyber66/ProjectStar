@@ -44,6 +44,10 @@ size_t token_index = 0;
 bool has_error = false;
 string emitted_code = "";
 unordered_map<string, double> memory;
+// What the generated program prints when run, worked out at transpile time
+// (used by the web playground, which can't invoke g++)
+unordered_map<string, string> str_memory;
+string program_output = "";
 
 
 

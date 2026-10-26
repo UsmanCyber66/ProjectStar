@@ -119,10 +119,14 @@ void VarDecl(const vector<Token>& tokens) {
             string str_val = tokens[token_index].value;
             token_index++;
             emitted_code += "    std::string " + var_name + " = \"" + str_val + "\";\n";
+            str_memory[var_name] = str_val;
+            memory.erase(var_name);
         } else {
             long double val = tier1_expr(tokens);
-            memory[var_name] = val;
-            emitted_code += "    double " + var_name + " = " + to_string(val) + ";\n";
+            string literal = to_string(val);
+            memory[var_name] = stod(literal);
+            str_memory.erase(var_name);
+            emitted_code += "    double " + var_name + " = " + literal + ";\n";
         }
     }
 }
@@ -152,17 +156,23 @@ void PrintStatement(const vector<Token>& tokens) {
     token_index++; // Consume '('
 
     string print_arg = "";
+    ostringstream shown; // formatted the way std::cout would print it
     if (token_index < tokens.size() && tokens[token_index].type == TokenType::STRING_LITERAL) {
         print_arg = "\"" + tokens[token_index].value + "\"";
+        shown << tokens[token_index].value;
         token_index++;
     } 
     else if (token_index < tokens.size() && tokens[token_index].type == TokenType::IDENTIFIER) {
         print_arg = tokens[token_index].value;
+        if (str_memory.count(print_arg)) shown << str_memory[print_arg];
+        else if (memory.count(print_arg)) shown << memory[print_arg];
+        else throw runtime_error("Error: Variable '" + print_arg + "' is not defined (line " + to_string(tokens[token_index].line) + ")");
         token_index++;
     } 
     else {
         long double val = tier1_expr(tokens);
         print_arg = to_string(val);
+        shown << stod(print_arg);
     }
 
     if (token_index >= tokens.size() || tokens[token_index].type != TokenType::RPAREN) {
@@ -172,5 +182,44 @@ void PrintStatement(const vector<Token>& tokens) {
 
     if (!has_error) {
         emitted_code += "    std::cout << " + print_arg + " << std::endl;\n";
+        program_output += shown.str() + "\n";
     }
+}
+
+// ==========================================
+// Transpiler: Star source (imports already resolved) -> C++ source
+// ==========================================
+string transpile_source(const string& combined_source) {
+    token_index = 0;
+    has_error = false;
+    emitted_code = "";
+    program_output = "";
+    memory.clear();
+    str_memory.clear();
+
+    vector<Token> tokens = tokenize(combined_source);
+
+    string header_code = "#include <iostream>\n";
+    string body_code = "";
+
+    while (token_index < tokens.size() && tokens[token_index].type != TokenType::EOF_TOKEN) {
+        if (tokens[token_index].type == TokenType::PRINT) {
+            PrintStatement(tokens);
+            body_code += emitted_code;
+            emitted_code = "";
+        } else if (tokens[token_index].type == TokenType::CPPIMPORT) {
+            cppimport(tokens);
+            header_code += emitted_code + "\n";
+            emitted_code = "";
+        } else if (tokens[token_index].type == TokenType::IDENTIFIER) {
+            VarDecl(tokens);
+            body_code += emitted_code;
+            emitted_code = "";
+        } else {
+            token_index++;
+        }
+    }
+
+    // Assembly of valid C++ source structure
+    return header_code + "int main() {\n" + body_code + "    return 0;\n}\n";
 }
