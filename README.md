@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=c%2B%2B&logoColor=white">
 </p>
 
-<p><a href="https://sirmick.github.io/ProjectStar/"><strong>▶ Try Star in your browser</strong></a></p>
+<p><a href="https://usmancyber66.github.io/ProjectStar/"><strong>▶ Try Star in your browser</strong></a></p>
 
 </div>
 
